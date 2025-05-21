@@ -1,0 +1,149 @@
+# Assignment 1: Design Your Own Class!
+
+class Smartphone:
+    """
+    Represents a generic smartphone with core functionalities.
+    """
+    def __init__(self, brand, model, os_version, storage_gb, battery_mah):
+        """
+        Constructor to initialize a new Smartphone object.
+
+        Args:
+            brand (str): The brand of the smartphone (e.g., "Samsung", "Apple").
+            model (str): The specific model name (e.g., "Galaxy S23", "iPhone 15 Pro").
+            os_version (str): The operating system version (e.g., "Android 14", "iOS 17").
+            storage_gb (int): Internal storage in gigabytes.
+            battery_mah (int): Battery capacity in milliampere-hours.
+        """
+        self.brand = brand
+        self.model = model
+        self.os_version = os_version
+        self.storage_gb = storage_gb
+        self.battery_mah = battery_mah
+        self.is_on = False  # Default state: off
+        self.current_app = None # No app running initially
+
+    def power_on(self):
+        """Turns the smartphone on."""
+        if not self.is_on:
+            self.is_on = True
+            print(f"{self.brand} {self.model} is powering on... Welcome!")
+        else:
+            print(f"{self.brand} {self.model} is already on.")
+
+    def power_off(self):
+        """Turns the smartphone off."""
+        if self.is_on:
+            self.is_on = False
+            self.current_app = None # Close any running app
+            print(f"{self.brand} {self.model} is shutting down. Goodbye!")
+        else:
+            print(f"{self.brand} {self.model} is already off.")
+
+    def launch_app(self, app_name):
+        """Launches a specified application."""
+        if self.is_on:
+            self.current_app = app_name
+            print(f"{self.brand} {self.model} is launching {app_name}...")
+        else:
+            print(f"Cannot launch {app_name}. {self.brand} {self.model} is off.")
+
+    def close_app(self):
+        """Closes the currently running application."""
+        if self.is_on and self.current_app:
+            print(f"Closing {self.current_app} on {self.brand} {self.model}.")
+            self.current_app = None
+        elif self.is_on and not self.current_app:
+            print(f"{self.brand} {self.model} has no app currently running to close.")
+        else:
+            print(f"{self.brand} {self.model} is off.")
+
+    def get_info(self):
+        """Returns a string with basic information about the smartphone."""
+        status = "on" if self.is_on else "off"
+        app_status = f"Running: {self.current_app}" if self.current_app else "No app running"
+        return (f"{self.brand} {self.model} ({self.os_version}) - "
+                f"{self.storage_gb}GB storage, {self.battery_mah}mAh battery. "
+                f"Status: {status}. {app_status}")
+
+class FoldableSmartphone(Smartphone):
+    """
+    Represents a foldable smartphone, inheriting from Smartphone.
+    Adds unique attributes and overrides a method for specific behavior.
+    """
+    def __init__(self, brand, model, os_version, storage_gb, battery_mah, fold_mechanism, display_size_folded):
+        """
+        Constructor for FoldableSmartphone, extending the base Smartphone constructor.
+        """
+        super().__init__(brand, model, os_version, storage_gb, battery_mah)
+        self.fold_mechanism = fold_mechanism # e.g., "Clamshell", "Book-style"
+        self.display_size_folded = display_size_folded # Size when folded
+        self.is_folded = True # Default state: folded
+
+    def unfold(self):
+        """Unfolds the smartphone."""
+        if self.is_on:
+            if self.is_folded:
+                self.is_folded = False
+                print(f"{self.brand} {self.model} is unfolding to full display!")
+            else:
+                print(f"{self.brand} {self.model} is already unfolded.")
+        else:
+            print(f"{self.brand} {self.model} is off, cannot unfold.")
+
+    def fold(self):
+        """Folds the smartphone."""
+        if self.is_on:
+            if not self.is_folded:
+                self.is_folded = True
+                print(f"{self.brand} {self.model} is folding to compact size.")
+            else:
+                print(f"{self.brand} {self.model} is already folded.")
+        else:
+            print(f"{self.brand} {self.model} is off, cannot fold.")
+
+    def get_info(self):
+        """
+        Overrides the base get_info method to include foldable specific details.
+        Demonstrates polymorphism: same method name, different behavior based on class.
+        """
+        base_info = super().get_info() # Get info from parent class
+        fold_status = "folded" if self.is_folded else "unfolded"
+        return (f"{base_info}\n  - Fold Mechanism: {self.fold_mechanism}, "
+                f"Folded Display: {self.display_size_folded} inches. "
+                f"Current state: {fold_status}.")
+
+# --- Demonstration for Assignment 1 ---
+print("--- Assignment 1: Smartphone Class Demonstration ---")
+
+# Create instances of Smartphone
+my_phone = Smartphone("Google", "Pixel 8 Pro", "Android 14", 256, 5050)
+dad_phone = Smartphone("Apple", "iPhone 14", "iOS 16", 128, 3279)
+
+print("\n--- My Phone ---")
+print(my_phone.get_info())
+my_phone.power_on()
+my_phone.launch_app("Maps")
+print(my_phone.get_info())
+my_phone.close_app()
+my_phone.power_off()
+print(my_phone.get_info())
+
+print("\n--- Dad's Phone ---")
+print(dad_phone.get_info())
+dad_phone.power_on()
+dad_phone.launch_app("Safari")
+print(dad_phone.get_info())
+
+# Create an instance of FoldableSmartphone
+my_foldable = FoldableSmartphone("Samsung", "Galaxy Z Fold5", "Android 14", 512, 4400, "Book-style", 6.2)
+
+print("\n--- My Foldable Smartphone ---")
+print(my_foldable.get_info()) # Calls the overridden get_info
+my_foldable.power_on()
+my_foldable.unfold()
+my_foldable.launch_app("Netflix")
+print(my_foldable.get_info())
+my_foldable.fold()
+my_foldable.power_off()
+print(my_foldable.get_info())
